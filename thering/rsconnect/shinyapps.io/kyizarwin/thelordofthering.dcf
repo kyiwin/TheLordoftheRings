@@ -1,0 +1,12 @@
+name: thelordofthering
+title: Thelordofthering
+username:
+account: kyizarwin
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 900359
+bundleId: 2050024
+url: https://kyizarwin.shinyapps.io/thelordofthering/
+when: 1556637359.76013
+asMultiple: FALSE
+asStatic: FALSE

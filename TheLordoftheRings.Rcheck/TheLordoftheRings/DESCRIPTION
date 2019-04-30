@@ -1,0 +1,14 @@
+Package: TheLordoftheRings
+Type: Package
+Title: The Lord of the Rings Package
+Version: 0.1.0
+Author: J.R.R. Tolkien
+Maintainer: Kyi Win <kyizarwin@gmail.com>
+Description: For over fifty years J.R.R. Tolkien's epic novel The Lord of the Rings has been widely available in libraries and bookstores around the world. Now, available in movies, and this document is created to easily analyze the text in this novel and available as a R package for everyone use.
+License: MIT, GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+NeedsCompilation: no
+Packaged: 2019-04-08 22:10:17 UTC; clear
+Built: R 3.5.2; ; 2019-04-08 22:10:21 UTC; unix
