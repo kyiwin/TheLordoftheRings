@@ -16,7 +16,7 @@ Analysis Results
 ![Analysis Results](Rmdfiles/lr9.png)
 ![Analysis Results](Rmdfiles/lr10.png)
 ![Analysis Results](Rmdfiles/lr11.png)
-![Analysis Results](Rmdfiles/lr12.png)
+
 
 R shiny creation 
 
