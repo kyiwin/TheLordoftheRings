@@ -1,0 +1,184 @@
+---
+title: "Lstm"
+author: "Kyi Win"
+date: "4/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+library(keras)
+library(readr)
+library(stringr)
+library(purrr)
+library(tokenizers)
+```
+
+```{r}
+maxlen <- 200
+```
+
+```{r}
+text <- read_lines(Book1_TheRingsetsout) %>%
+  str_to_lower() %>%
+  str_c(collapse = "\n") %>%
+  tokenize_characters(strip_non_alphanum = FALSE, simplify = TRUE)
+
+```
+
+```{r}
+print(sprintf("corpus length: %d", length(text)))
+```
+
+```{r}
+chars <- text %>%
+  unique() %>%
+  sort()
+
+print(sprintf("total chars: %d", length(chars)))  
+```
+
+```{r}
+dataset <- map(
+  seq(1, length(text) - maxlen - 1, by = 3), 
+  ~list(sentece = text[.x:(.x + maxlen - 1)], next_char = text[.x + maxlen])
+  )
+
+dataset <- transpose(dataset)
+
+```
+
+```{r}
+x <- array(0, dim = c(length(dataset$sentece), maxlen, length(chars)))
+y <- array(0, dim = c(length(dataset$sentece), length(chars)))
+```
+
+```{r}
+for(i in 1:length(dataset$sentece)){
+  
+  x[i,,] <- sapply(chars, function(x){
+    as.integer(x == dataset$sentece[[i]])
+  })
+  
+  y[i,] <- as.integer(chars == dataset$next_char[[i]])
+  
+}
+```
+
+```{r}
+library(tensorflow)
+library(keras)
+model <- keras_model_sequential()
+
+model %>%
+  layer_lstm(128, input_shape = c(maxlen, length(chars))) %>%
+  layer_dense(length(chars)) %>%
+  layer_activation("softmax")
+
+optimizer <- optimizer_rmsprop(lr = 0.01)
+
+model %>% compile(
+  loss = "categorical_crossentropy", 
+  optimizer = optimizer
+)
+
+```
+
+```{r}
+model <- keras_model_sequential() %>% 
+  layer_lstm(units = 128, input_shape = c(maxlen, length(chars))) %>% 
+  layer_dense(units = length(chars), activation = "softmax")
+```
+
+```{r}
+optimizer <- optimizer_rmsprop(lr = 0.01)
+model %>% compile(
+  loss = "categorical_crossentropy", 
+  optimizer = optimizer
+)   
+```
+
+```{r}
+sample_mod <- function(preds, temperature = 1){
+  preds <- log(preds)/temperature
+  exp_preds <- exp(preds)
+  preds <- exp_preds/sum(exp(preds))
+  
+  rmultinom(1, 1, preds) %>% 
+    as.integer() %>%
+    which.max()
+}
+
+```
+
+```{r}
+on_epoch_end <- function(epoch, logs) {
+  
+  cat(sprintf("epoch: %02d ---------------\n\n", epoch))
+  
+  for(diversity in c(0.2, 0.5, 1, 1.2)){
+    
+    cat(sprintf("diversity: %f ---------------\n\n", diversity))
+    
+    start_index <- sample(1:(length(text) - maxlen), size = 1)
+    sentence <- text[start_index:(start_index + maxlen - 1)]
+    generated <- ""
+    
+    for(i in 1:400){
+      
+      x <- sapply(chars, function(x){
+        as.integer(x == sentence)
+      })
+      x <- array_reshape(x, c(1, dim(x)))
+      
+      preds <- predict(model, x)
+      next_index <- sample_mod(preds, diversity)
+      next_char <- chars[next_index]
+      
+      generated <- str_c(generated, next_char, collapse = "")
+      sentence <- c(sentence[-1], next_char)
+      
+    }
+    
+    cat(generated)
+    cat("\n\n")
+    
+  }
+}
+```
+
+```{r}
+print_callback <- callback_lambda(on_epoch_end = on_epoch_end)
+
+model %>% fit(
+  x, y,
+  batch_size = 128,
+  epochs = 5,
+  callbacks = print_callback
+)
+```
+
+
