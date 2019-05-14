@@ -3,6 +3,9 @@
 Analysis file doi
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2654983.svg)](https://doi.org/10.5281/zenodo.2654983)
 
+Paper Published
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2804057.svg)](https://doi.org/10.5281/zenodo.2804057)
+
 All files are published in this doi
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2655086.svg)](https://doi.org/10.5281/zenodo.2655086)
 
