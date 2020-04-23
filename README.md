@@ -9,6 +9,9 @@ Paper Published
 All files are published in this doi
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2655086.svg)](https://doi.org/10.5281/zenodo.2655086)
 
+Webpage for package site
+https://kyiwin.github.io/TheLordoftheRings/
+
 Package Description
 
 ![Package Description](Rmdfiles/lrpackage.png)
